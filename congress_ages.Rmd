@@ -1,0 +1,52 @@
+---
+title: "congress_ages"
+author: "Karen Jiang"
+date: "2/6/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(gov.1005.data)
+library(tidyverse)
+```
+
+```{r}
+data(congress)
+
+congress_age_by_party <- congress %>%
+  filter(party == "D" | party == "R") %>% 
+  group_by(year, party) %>%
+  summarize(avg_age = mean(age))
+
+color_group = c("blue","red")
+y_labs = c("40","45","50","55","60 yrs")
+x_labs = c("1950","'60","'70","'80","'90","2000","'10")
+
+ggplot(congress_age_by_party, aes(x=year, y=avg_age, color=party)) + 
+  geom_line() + 
+  labs(
+    title="Average Age of Members of Congress",
+    subtitle="At start of term, 1947-2013"
+  ) + 
+  scale_color_manual(values = color_group) + 
+  theme(
+    axis.title.x = element_blank(),
+    axis.title.y = element_blank(),
+    legend.position = "none"
+  ) +
+  scale_y_continuous(
+    breaks = c(40,45,50,55,60),
+    limits = c(40,60), 
+    minor_breaks = NULL, 
+    labels = y_labs) +
+  scale_x_continuous(
+    breaks = c(1950,1960,1970,1980,1990,2000,2010), 
+    limits = c(1945, 2015),
+    minor_breaks = NULL, 
+    labels = x_labs) +
+  annotate("text", x = 1967 , y = 57, label = "Republicans", color = "red") 
+  annotate("text", x = 1998 , y = 58, label = "Democrats", color = "blue")
+
+```
